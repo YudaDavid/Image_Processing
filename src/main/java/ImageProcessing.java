@@ -45,7 +45,7 @@ public class ImageProcessing extends JFrame {
             label.setText("https://facebook.com/"+s);
             try {
                 loadImage(label, this);
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         });
@@ -58,7 +58,7 @@ public class ImageProcessing extends JFrame {
 
 
 
-    public static void loadImage(JLabel label, ImageProcessing imageProcessing) throws IOException {
+    public static void loadImage(JLabel label, ImageProcessing imageProcessing) throws IOException, InterruptedException {
 
         // get profile pic from facebook and store it in PC folder (My folder here is C:\Images) the name of the image is profilePic
         System.setProperty(
@@ -67,21 +67,20 @@ public class ImageProcessing extends JFrame {
 
         ChromeDriver driver = new ChromeDriver();
         driver.get(label.getText());
+        Thread.sleep(6000);
+
         // find the element of the profile photo and store it in folder PC - optional - I guss there is another ways
-        List<WebElement> elements = driver.findElements(By.tagName("img"));
-        for(WebElement element: elements){
-            String s = element.getAttribute("data-imgperflogname");
-            if (s!= null) {
-                String src = element.getAttribute("src");
-                URL imageUrl = new URL(src);
-                BufferedImage image = ImageIO.read(imageUrl);
-                File file = new File("C:\\Images\\profilePic.jpg");
-                ImageIO.write(image, "jpg", file);
-            }
-        }
+        WebElement element = driver.findElement(By.xpath("//div[@class='b3onmgus e5nlhep0 ph5uu5jm ecm0bbzt spb7xbtv bkmhp75w emlxlaya s45kfl79 cwj9ozl2']//div[@class='q9uorilb l9j0dhe7 pzggbiyp du4w35lb']//*[name()='svg']//*[name()='g' and contains(@mask,'url(#jsc_c')]//*[name()='image' and contains(@x,'0')]"));
+        String src = element.getAttribute("xlink:href");
+        URL imageUrl = new URL(src);
+        BufferedImage scanImage = ImageIO.read(imageUrl);
+        File file = new File("C:\\Images\\profilePic.jpg");
+        ImageIO.write(scanImage, "jpg", file);
+
 
         
         // upload the photo form facebook to swing window
+        Thread.sleep(4000);
         JLabel image = new JLabel();
         image.setIcon(new ImageIcon("C:/Images/profilePic.jpg"));
         Dimension size = image.getPreferredSize();
