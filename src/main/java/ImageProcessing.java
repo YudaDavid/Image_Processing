@@ -44,7 +44,7 @@ public class ImageProcessing extends JFrame {
             String s = field.getText();
             label.setText("https://facebook.com/"+s);
             try {
-                loadImage(label, this);
+                loadImage(label);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -58,7 +58,7 @@ public class ImageProcessing extends JFrame {
 
 
 
-    public static void loadImage(JLabel label, ImageProcessing imageProcessing) throws IOException, InterruptedException {
+    public void loadImage(JLabel label) throws IOException, InterruptedException {
 
         // get profile pic from facebook and store it in PC folder (My folder here is C:\Images) the name of the image is profilePic
         System.setProperty(
@@ -79,16 +79,24 @@ public class ImageProcessing extends JFrame {
 
 
         
-        // upload the photo form facebook to swing window
-        Thread.sleep(4000);
-        JLabel image = new JLabel();
-        image.setIcon(new ImageIcon("C:/Images/profilePic.jpg"));
-        Dimension size = image.getPreferredSize();
-        System.out.println(size);
-        image.setBounds(0, 0, size.width, size.height);
-        imageProcessing.add(image);
+        // upload the photo form folder to swing window
+        if (file.exists()) {
+            Thread.sleep(2000);
+            JLabel originImageText = new JLabel("Original Image");
+            ImageIcon myPicture = new ImageIcon("C:\\Images\\profilePic.jpg");
+            JLabel picLabel = new JLabel(myPicture);
+            JPanel originImage = new JPanel();
+            originImage.setBounds(0, 0, 300, 900);
+            originImage.setBackground(Color.orange);
+            originImage.setVisible(true);
+            originImage.setLayout(null);
+            originImage.add(originImageText).setBounds((originImage.getWidth() - 100) / 2, 10, 100, 50);
+            originImage.add(picLabel).setBounds((originImage.getWidth() - myPicture.getIconWidth()) / 2, 150, myPicture.getIconWidth(), myPicture.getIconHeight());
+            originImage.revalidate();
+            this.add(originImage);
+            this.setVisible(true);
 
-        imageProcessing.setVisible(true);
+        }
 
 
         // *the next step is prcess and make filters to photo
